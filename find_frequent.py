@@ -2,7 +2,7 @@ import pandas as pd
 
 yelp_review = pd.read_csv("yelp_review.csv")
 
-highest_reviews = yelp_review.groupby(['business_id'])['business_id'].count().reset_index(name='count').sort_values(['count'], ascending=False).head(10)
+highest_reviews = yelp_review.groupby(['business_id'])['business_id'].count().reset_index(name='count').sort_values(['count'], ascending=False).head(100)
 
 print(highest_reviews)
 

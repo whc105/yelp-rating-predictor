@@ -20,8 +20,11 @@ def analyze(lexiconDF, reviewsDF):
 	
 	reviewsDF = reviewsDF.merge(temp, left_index=True, right_index=True)
 	
-	compiledReviewsDF = reviewsDF.groupby(['business_id'])['polarity'].mean()
-	print(reviewsDF)	
+	compiledReviewsDF = reviewsDF.groupby(['business_id'])['polarity'].mean().reset_index()
+	
+	
+	compiledReviewsDF.to_csv (r'compiled_reviews.csv', index = False, header=True)
+
 	print(compiledReviewsDF)
 	
 lexiconDF = pd.read_csv(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vader_lexicon.txt')), sep='\t', header=None, names=('token', 'polarity', 'sentiment', 'list'))
