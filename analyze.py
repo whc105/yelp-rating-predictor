@@ -30,10 +30,9 @@ def analyze(lexiconDF, reviewsDF):
 lexiconDF = pd.read_csv(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vader_lexicon.txt')), sep='\t', header=None, names=('token', 'polarity', 'sentiment', 'list'))
 lexiconDF.drop(columns=['sentiment', 'list'], inplace=True)
 lexiconDF.set_index('token', inplace=True)
-	
+
 regSymbols = r'[\U00010000-\U0010ffff:/.#^,?@!\-\(\)]'
 reviewsDF = pd.read_csv("parsed_workable.csv")
 reviewsDF['parsed_text'] = reviewsDF['text'].apply(lambda x: re.sub(regSymbols, ' ', str(x.lower())))
 
 analyze(lexiconDF, reviewsDF)
-
