@@ -1,19 +1,19 @@
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 import os
-import pandas as pd 
+import pandas as pd
 
-reviewsDF = pd.read_csv("parsed_workable.csv")
+reviewsDF = pd.read_csv("parsed_workable-1000.csv")
 reviewsDF.drop(columns=['business_id'], inplace=True)
 
-#change to the maximum
+# change to the maximum
 reviewsDF = reviewsDF.head(1000)
 
 lexiconDF = pd.read_csv(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vader_lexicon.txt')), sep='\t', header=None, names=('token', 'polarity', 'sentiment', 'list'))
 lexiconDF.drop(columns=['sentiment', 'list'], inplace=True)
 lexiconDF.set_index('token', inplace=True)
 
-#Flatten and averages the words
+# Flatten and averages the words
 wordRatings = reviewsDF[['text']]
 wordRatings = wordRatings['text'].str.split(expand=True).stack().reset_index()
 wordRatings = wordRatings.merge(reviewsDF, right_index=True, left_index=True)
@@ -24,7 +24,7 @@ wordRatings.set_index('id', inplace=True)
 wordRatings = wordRatings.groupby(['word'])['stars'].mean().reset_index()
 wordRatings = wordRatings.merge(lexiconDF, how='left', left_on='word', right_index=True)
 
-wordsInLexicon = wordRatings[wordRatings['polarity'].notnull()]
+wor""dsInLexicon = wordRatings[wordRatings['polarity'].notnull()]
 
 wordsInLexiconPolarity_train = wordsInLexicon['polarity'].values.reshape(-1, 1)
 wordsInLexiconStars_train = wordsInLexicon['stars'].values.reshape(-1, 1)
