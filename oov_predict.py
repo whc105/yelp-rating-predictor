@@ -1,14 +1,14 @@
 from sklearn import linear_model
-from sklearn.model_selection import train_test_split
 import os
 import pandas as pd 
+import enchant
+
+dictionary = enchant.Dict('en_US')
 
 reviewsDF = pd.read_csv("parsed_workable.csv")
 reviewsDF.drop(columns=['business_id'], inplace=True)
 
 #change to the maximum
-reviewsDF = reviewsDF.head(1000)
-
 lexiconDF = pd.read_csv(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vader_lexicon.txt')), sep='\t', header=None, names=('token', 'polarity', 'sentiment', 'list'))
 lexiconDF.drop(columns=['sentiment', 'list'], inplace=True)
 lexiconDF.set_index('token', inplace=True)
@@ -21,7 +21,16 @@ wordRatings.drop(columns=['text'], inplace=True)
 wordRatings.columns = ['id', 'nums', 'word', 'stars']
 wordRatings.drop(columns=['nums'], inplace=True)
 wordRatings.set_index('id', inplace=True)
-wordRatings = wordRatings.groupby(['word'])['stars'].mean().reset_index()
+
+#Select only english words and words that occur 10 or more times
+wordRatings = wordRatings.groupby(['word'])['stars'].agg(['count', 'mean']).reset_index()
+wordRatings['isEn'] = wordRatings['word'].apply(lambda word: dictionary.check(word))
+wordRatings = wordRatings[(wordRatings['isEn'] == True) & (wordRatings['count'] > 10)]
+wordRatings.rename(columns={'mean': 'stars'}, inplace=True)
+
+wordRatings.drop(columns=['count', 'isEn'], inplace=True)
+
+
 wordRatings = wordRatings.merge(lexiconDF, how='left', left_on='word', right_index=True)
 
 wordsInLexicon = wordRatings[wordRatings['polarity'].notnull()]
@@ -46,4 +55,5 @@ predictedPolarityDF.rename(columns={'Predicted Polarity': 'polarity'}, inplace=T
 concatLexiconDF = pd.concat([lexiconDF, predictedPolarityDF])
 
 concatLexiconDF.to_csv(r'combined_lexicon.csv', index = True, header=True)
+
 #print(predictedPolarityDF.loc[predictedPolarityDF['Word'] == 'bland'])

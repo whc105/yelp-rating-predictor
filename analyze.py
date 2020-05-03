@@ -26,8 +26,12 @@ def analyze(lexiconDF, reviewsDF):
 
 	print(compiledReviewsDF)
 	
-lexiconDF = pd.read_csv(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vader_lexicon.txt')), sep='\t', header=None, names=('token', 'polarity', 'sentiment', 'list'))
-lexiconDF.drop(columns=['sentiment', 'list'], inplace=True)
+lexiconDF = pd.read_csv('combined_lexicon.csv')
+
+#lexiconDF = pd.read_csv(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vader_lexicon.txt')), sep='\t', header=None, names=('token', 'polarity', 'sentiment', 'list'))
+#lexiconDF.drop(columns=['sentiment', 'list'], inplace=True)
+
+
 lexiconDF.set_index('token', inplace=True)
 
 reviewsDF = pd.read_csv("parsed_workable.csv")

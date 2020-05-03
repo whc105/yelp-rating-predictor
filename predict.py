@@ -20,4 +20,8 @@ regr.fit(polarity_train, stars_train)
 predicted = regr.predict(polarity_test)
 
 df = pd.DataFrame({'Actual': stars_test.flatten(), 'Predicted': predicted.flatten()})
+
+df.to_csv(r'predicted_result.csv', index = True, header=True)
 print(df)
+
+print(df.corr())
