@@ -1,9 +1,9 @@
-import pandas as pd 
+import pandas as pd
 import re
 
 yelp_review = pd.read_csv("yelp_review.csv")
 
-highest_reviews = yelp_review.groupby(['business_id'])['business_id'].count().reset_index(name='count').sort_values(['count'], ascending=False).head(50)
+highest_reviews = yelp_review.groupby(['business_id'])['business_id'].count().reset_index(name='count').sort_values(['count'], ascending=False).head(1000)
 
 result = yelp_review.loc[yelp_review['business_id'].isin(highest_reviews['business_id'])]
 
@@ -19,4 +19,4 @@ result.drop(columns=['review_id', 'user_id', 'date', 'useful', 'funny', 'cool'],
 
 result = result[result.text != '']
 
-result.to_csv(r'parsed_workable.csv', index = False, header=True)
+result.to_csv(r'parsed_workable-1000.csv', index = False, header=True)
